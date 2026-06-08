@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>SpeedRead Math Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="card">
+        <h1>{{ problem.equation }} = ?</h1>
+
+        <input type="number" id="userAnswer" step="any" placeholder="Ответ..." autofocus>
+        <br>
+
+        <button class="btn-check" id="checkBtn">Проверить</button>
+        <button class="btn-next" id="nextBtn" onclick="window.location.reload();">Следующий пример</button>
+
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        const CORRECT_ANSWER = {{ problem.result }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 80px;
+    background-color: #f4f4f9;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    display: inline-block;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    min-width: 300px;
+}
+
+h1 {
+    color: #333;
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+input[type="number"] {
+    padding: 10px;
+    font-size: 20px;
+    width: 140px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn-check {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-next {
+    background-color: #007BFF;
+    color: white;
+    display: none; /* Изначально скрыта */
+}
+
+#feedback {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 15px;
+    min-height: 35px;
+}
+
+.correct {
+    color: #28a745;
+}
+
+.incorrect {
+    color: #dc3545;
+}
