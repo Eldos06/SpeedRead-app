@@ -8,7 +8,8 @@
 <body>
 
     <div class="card">
-        <h1>{{ problem.equation }} = ?</h1>
+
+        <h1>{{ problem.equation }} = ?</h1>   <!-- <h1>5 * 6 = ?</h1> -->
 
         <input type="number" id="userAnswer" step="any" placeholder="Ответ..." autofocus>
         <br>
@@ -20,7 +21,7 @@
     </div>
 
     <script>
-        const CORRECT_ANSWER = {{ problem.result }};
+        const CORRECT_ANSWER = {{ problem.result }};  <!-- const CORRECT_ANSWER = 30; -->
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
