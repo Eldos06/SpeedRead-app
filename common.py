@@ -5,6 +5,7 @@ import logging
 def log(message, *args, level=logging.INFO, **kwargs):
     logging.log(level, str(message), *args, **kwargs)
 
+
 def configure_logging(level=logging.INFO):
     logging.basicConfig(
         level=level,

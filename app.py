@@ -1,41 +1,104 @@
-from flask import Flask, render_template, jsonify
-from random import randint, choice
 import operator
+from random import choice, randint, shuffle
+
+from flask import Flask, render_template, request
+
 from common import configure_logging, log
 
 app = Flask(__name__)
 
 
-def generate_math_problem():
-    ops_map = {
-        '+': operator.add,
-        '-': operator.sub,
-        '*': operator.mul,
-        '/': operator.truediv
-    }
-
-    num1 = randint(1, 99)
-    num2 = randint(1, 99)
-    op_symbol = choice(list(ops_map.keys()))
-
-    raw_result = ops_map[op_symbol](num1, num2)
-    result = round(raw_result, 2) if op_symbol == '/' else raw_result
-    return {
-        'equation': f"{num1} {op_symbol} {num2}",
-        'result': result
-    }
+MIN_NUMBER = 1
+MAX_NUMBER = 99
+OPERATOR_MAP = {"+": operator.add, "-": operator.sub, "*": operator.mul, "/": operator.truediv}
+COUNT_FUNCTIONS = 112
+SIZE_TABLE = 5
 
 
-@app.route('/')
+def get_function() -> dict[str, str]:
+    """Формирует уравнение с результатом.
+
+    Returns:
+        dict[str, str]: уравнение с результатом.
+    """
+
+    operator_symbol = choice(list(OPERATOR_MAP))
+
+    number_left = randint(MIN_NUMBER, MAX_NUMBER)
+    number_right = randint(MIN_NUMBER, MAX_NUMBER)
+    while True:
+        result: float | int = OPERATOR_MAP[operator_symbol](number_left, number_right)
+        if (
+            operator_symbol == "/" and not result.is_integer()
+        ):  # Если есть дробная часть - пересчитываем с новыми числами.
+            number_left = randint(MIN_NUMBER, MAX_NUMBER)
+            number_right = randint(MIN_NUMBER, MAX_NUMBER)
+            continue
+        return {"equation": f"{number_left} {operator_symbol} {number_right}", "result": str(result)}
+
+
+def get_table(size: int = SIZE_TABLE) -> list[list[int | None]]:
+    """Отдаёт таблицу Шульте.
+
+    Args:
+        size (int, optional): размер таблицы. По дефолту SIZE_TABLE.
+
+    Returns:
+        list[list[int | None]]: таблица Шульте.
+    """
+    numbers = list(range(1, size * size))
+    shuffle(numbers)
+    table: list[list[int | None]] = []
+    point_index = size // 2
+    for i in range(size):
+        row = []
+        table.append(row)
+        for j in range(size):
+            if point_index == i and point_index == j:
+                row.append(None)
+                continue
+            row.append(numbers.pop())
+    from pprint import pprint
+
+    pprint(table)
+    return table
+
+
+@app.route("/")
 def home():
-    problem = generate_math_problem()
+    function = get_function()
     # Flask автоматически будет искать файл index.html в папке templates
-    log(f"problem: {problem}")
-    log(f"render_template('index.html', problem=problem): {render_template('index.html', problem=problem)}")
-    return render_template('index.html', problem=problem)
+    log(f"function: {function}")
+    log(f"render_template('index.html', function=function): {render_template('index.html', function=function)}")
+    return render_template("index.html", function=function)
 
 
+@app.route("/functions/")
+def functions() -> str:
+    """Ручка получения html-страницы c формулами.
 
-if __name__ == '__main__':
+    Returns:
+        str: html-страница.
+    """
+    count = request.args.get("count", COUNT_FUNCTIONS, type=int)
+    if count <= 0:
+        count = COUNT_FUNCTIONS
+    return render_template("index.html", functions=[get_function() for _ in range(count)])
+
+
+@app.route("/tables/")
+def table() -> str:
+    """Ручка получения html-страницы c таблицей Шульте.
+
+    Returns:
+        str: html-страница.
+    """
+    size = request.args.get("size", SIZE_TABLE, type=int)
+    if size <= 2 and not size % 2:  # Должен быть больше 3x3 и нечётный, чтобы точка была по-середине.
+        size = SIZE_TABLE
+    return render_template("index.html", table=get_table(size))
+
+
+if __name__ == "__main__":
     configure_logging()
     app.run(debug=True)
