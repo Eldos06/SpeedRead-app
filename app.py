@@ -58,9 +58,6 @@ def get_table(size: int = SIZE_TABLE) -> list[list[int | None]]:
                 row.append(None)
                 continue
             row.append(numbers.pop())
-    from pprint import pprint
-
-    pprint(table)
     return table
 
 
